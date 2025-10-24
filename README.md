@@ -1,10 +1,3 @@
-# my-spring-boot
-create a image and deploy on kubernetes using jenkins
-
-What is it?
-This source code is an Spring Boot web application).
-
-How to run this?
 $ git clone current repo
 $ cd docker-spring-boot
 $ mvn clean package
