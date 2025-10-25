@@ -1,0 +1,52 @@
+pipeline {
+    agent any
+
+    environment {
+        registry = "124420982542.dkr.ecr.us-east-1.amazonaws.com/my-docker-repo"
+    }
+
+    stages {
+
+        stage('Checkout') {
+            steps {
+                checkout scmGit(
+                    branches: [[name: '*/main']],
+                    userRemoteConfigs: [[url: 'https://github.com/AKbunnyThakur/my-spring-boot.git']]
+                )
+            }
+        }
+
+        stage('Build jar') {
+            steps {
+                sh 'mvn clean install'
+            }
+        }
+
+        stage('Build image') {
+            steps {
+                script {
+                    dockerImage = docker.build("${registry}:${BUILD_NUMBER}")
+                }
+            }
+        }
+
+        stage('Push image') {
+            steps {
+                script {
+                    sh '''
+                        aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 124420982542.dkr.ecr.us-east-1.amazonaws.com
+                        docker push ${registry}:${BUILD_NUMBER}
+                    '''
+                }
+            }
+        }
+        stage('helm-deploy') {
+            steps {
+                script {
+                    sh "helm upgrade first-spring-boot --install mychart --namespace helm-deployment --set image.tag=$BUILD_NUMBER"
+                }
+            }
+        }
+    }
+}
+
