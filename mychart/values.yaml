@@ -7,7 +7,7 @@ replicaCount: 1
 
 # This sets the container image more information can be found here: https://kubernetes.io/docs/concepts/containers/images/
 image:
-  repository: anilkatwal/my-spring-boot-app
+  repository: anilkatwal/my-spring-boot-app   # if using ECR then add ecr repository it changed because tesing on local cluster or on premise cluster
   # This sets the pull policy for images.
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
